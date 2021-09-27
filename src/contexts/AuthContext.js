@@ -14,8 +14,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       setUser(user);
+      //console.log("Logged in:" + user.displayName);
       setLoading(false);
-      if(user) history.push("/chats");
+      if(user) history.push("/chats"); //redirects you upon sign up
     });
   }, [user, history]);
 

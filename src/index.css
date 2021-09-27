@@ -53,11 +53,6 @@ body {
 }
 
 
-.google {
-  background-color: #4285f4;
-  color: white;
-}
-
 #loading-container {
   position: absolute;
   top: 0px;
@@ -73,3 +68,4 @@ body {
   left: calc(50vw - 33px);
   top: calc(50vh - 22px);
 }
+

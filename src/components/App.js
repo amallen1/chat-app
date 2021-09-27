@@ -6,11 +6,10 @@ import { AuthProvider } from "../contexts/AuthContext";
 import styled from "styled-components";
 
 import Chats from "./Chats";
-import Login from "./Login";
+import Login from "./Login/Login";
+import Signup from "./Signup/Signup";
 
-const Container = styled.div`
-  font-family: "Avenir";
-`;
+const Container = styled.div``;
 
 function App() {
   return (
@@ -18,8 +17,9 @@ function App() {
       <Router>
         <AuthProvider>
           <Switch>
+            <Route exact path="/" component={Login} />
+            <Route path="/signup" component={Signup} />
             <Route path="/chats" component={Chats} />
-            <Route path="/" component={Login} />
           </Switch>
         </AuthProvider>
       </Router>
