@@ -19,7 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    auth
+    await auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in

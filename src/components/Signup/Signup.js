@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth } from "../../Firebase";
 import "firebase/app";
 import { useAuth } from "../../contexts/AuthContext";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 import {
   SignupPage,
@@ -17,16 +19,32 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const history = useHistory();
+
+  const getFile = async (url) => {
+    const response = await fetch(url);
+    const data = await response.blob(); //contains our image
+
+    return new File([data], "userPhoto.jpeg", { type: "image/jpeg" });
+  };
+
+  useEffect(() => {
+    createUser2(); 
+  }, [user, history]);
 
   // Creates an account for the user on firebase
   const login = async () => {
-    auth
+    await auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in
         const userCred = userCredential.user;
-        console.log("THIS IS THE UID IM PASSING" + userCred.uid);
-        createUser(userCred.uid);
+        //console.log("THIS IS THE UID IM PASSING" + userCred.uid);
+        // createUser(userCred.uid);
+
+        //creates an account for user on chat engine
+        //createUser2();
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -36,12 +54,40 @@ const Signup = () => {
       });
   };
 
+  const createUser2 = async () => {
+    //we want to see if a user has already been created
+    if (!user) return;
+    const axios = require("axios");
+    let data = {
+      username: user.email,
+      secret: user.uid,
+      email: user.email,
+    };
+
+    let config = {
+      method: "post",
+      url: "https://api.chatengine.io/users/",
+      headers: {
+        "PRIVATE-KEY": "{ae4eb860-1f12-4aa3-b312-66611960f055}",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   //post request to create a new user on chat engine
   const createUser = async (userCred) => {
     let axios = require("axios");
     let data = {
       username: email,
-      secret: userCred, //how is user secret generated, but it is null unfortunately
+      secret: userCred,
       email: email,
     };
 
@@ -65,16 +111,11 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("Name: " + name);
-    // console.log("Email: " + email);
-    // console.log("Password: " + password);
 
     try {
       await login();
-      //console.log("WHAT IS THE UID HEREEEEE" + user.uid);
-      //we cannot access the uid for some reason
     } catch (error) {
-      console.log("whats the fucking error " + error);
+      console.log("Login after signup failed " + error);
     }
   };
 
