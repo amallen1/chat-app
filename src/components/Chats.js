@@ -11,8 +11,6 @@ const Chats = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
-  console.log(user);
-
   const handleLogout = async () => {
     await auth.signOut();
     history.push("/");
@@ -26,11 +24,15 @@ const Chats = () => {
   };
 
   useEffect(() => {
+    //if there is no user
     if (!user) {
       history.push("/");
       return;
     }
 
+    //if we do have a user, make a get call to the chat engine
+    //we want to see if a user has already been created
+    //console.log("BEFORE AXIOS CALLLLLLLuser.uid)
     axios
       .get("https://api.chatengine.io/users/me", {
         headers: {
@@ -41,11 +43,12 @@ const Chats = () => {
       })
       .then(() => {
         setLoading(false);
+        console.log("LOADING IS SET TO FALSE");
       })
       .catch(() => {
         let formdata = new FormData();
         formdata.append("email", user.email);
-        formdata.append("username", user.displayName);
+        formdata.append("username", user.email);
         formdata.append("secret", user.uid);
 
         getFile(user.photoURL).then((avatar) => {
@@ -59,12 +62,13 @@ const Chats = () => {
             })
             .then(() => setLoading(false))
             .catch((error) => console.log(error));
+          console.log("IT WAS AN ERROR");
         });
       });
   }, [user, history]);
 
-  //console.log(user)
-  //if (!user || loading) return "Loading...";
+  // console.log(JSON.stringify(user));
+  if (!user || loading) return "Loading...";
 
   return (
     <div className="chats-page">

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { auth } from "../../Firebase";
 import "firebase/app";
-import firebase from "firebase/compat/app";
+import { useAuth } from "../../contexts/AuthContext";
 
 import {
   SignupPage,
@@ -16,18 +16,17 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { user } = useAuth();
 
-  // Creates an account for the user
+  // Creates an account for the user on firebase
   const login = async () => {
-    console.log("Email: " + email);
-    console.log("Password: " + password);
-
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in
-        const user = userCredential.user;
-        console.log("User: " + user);
+        const userCred = userCredential.user;
+        console.log("THIS IS THE UID IM PASSING" + userCred.uid);
+        createUser(userCred.uid);
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -35,16 +34,48 @@ const Signup = () => {
         console.log(errorCode);
         console.log(errorMessage);
       });
-
-    alert("Account created");
   };
 
-  const handleSubmit = (e) => {
+  //post request to create a new user on chat engine
+  const createUser = async (userCred) => {
+    let axios = require("axios");
+    let data = {
+      username: email,
+      secret: userCred, //how is user secret generated, but it is null unfortunately
+      email: email,
+    };
+
+    let config = {
+      method: "post",
+      url: "https://api.chatengine.io/users/",
+      headers: {
+        "PRIVATE-KEY": "{{ae4eb860-1f12-4aa3-b312-66611960f055}}",
+      },
+      data: data,
+    };
+
+    axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Name: " + name);
-    console.log("Email: " + email);
-    console.log("Password: " + password);
-    login();
+    // console.log("Name: " + name);
+    // console.log("Email: " + email);
+    // console.log("Password: " + password);
+
+    try {
+      await login();
+      //console.log("WHAT IS THE UID HEREEEEE" + user.uid);
+      //we cannot access the uid for some reason
+    } catch (error) {
+      console.log("whats the fucking error " + error);
+    }
   };
 
   return (
