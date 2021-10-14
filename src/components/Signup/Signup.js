@@ -22,16 +22,16 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user } = useAuth();
-  //const history = useHistory();
+  const history = useHistory();
 
+  //seems like errors happen when a new user signs up and doesn't have any chats
   useEffect(() => {
     if (user) {
-      //creates an account for user on chat engine
       createUser();
     }
   }, [user]);
 
-  // Creates an account for the user on firebase and this works as it should
+  // Creates an account for the user on firebase
   const createFirebaseUser = async () => {
     await auth
       .createUserWithEmailAndPassword(email, password)
@@ -48,6 +48,7 @@ const Signup = () => {
   };
 
   //posting correctly to the chat api
+  //Creates a user on chatengine io backend
   const createUser = async () => {
     if (!user) return;
     //we want to see if a user has already been created
@@ -58,12 +59,6 @@ const Signup = () => {
       email: user.email,
       secret: user.uid,
     };
-
-    console.log("what the hell is this")
-    console.log(data.secret)
-
-    localStorage.setItem("usersecret", user.uid);
-    console.log(user.uid);
 
     let config = {
       method: "post",
@@ -77,11 +72,13 @@ const Signup = () => {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
-        console.log("IT WAS A SUCCESS");
       })
       .catch(function (error) {
-        console.log("WHATS THE FREAKING ERROR -->" + error);
+        console.log("what is the error -->" + error);
       });
+
+    console.log("successfully created a user on chatengine io");
+    history.push("/chats");
   };
 
   const handleSubmit = async (e) => {

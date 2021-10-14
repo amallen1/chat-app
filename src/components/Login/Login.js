@@ -5,6 +5,7 @@ import firebase from "firebase/compat/app";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { StyledLink } from "./LoginStyles";
+import { useHistory } from "react-router-dom";
 
 import {
   LoginPage,
@@ -22,52 +23,39 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user } = useAuth();
+  const history = useHistory();
 
   useEffect(() => {
     if (user) {
-      console.log("hi");
+      try {
+        //authenticating the user before going to chat page
+        axios.get("https://api.chatengine.io/users/me", {
+          headers: {
+            "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+            "user-name": email,
+            "user-secret": user.uid,
+          },
+        });
+        console.log("USER AUTHENTICATED");
+      } catch (error) {
+        console.log("Login failed! " + error);
+      }
       console.log(user.uid);
+      history.push("/chats");
     }
-  }, []);
+  }, [user]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // const authObject = {
-    //   "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
-    //   "User-Name": email,
-    //   "User-Secret": user.uid,
-    // };
-
     try {
-      await loginToSite();
-
-      //console.log(user.uid);
-
-      //i think this is getting the chats
-      // await axios.get("https://api.chatengine.io/chats", {
-      //   headers: authObject,
-      // });
-      // console.log("SUCCESSFULLY GOT CHATS FOR THIS USER");
-
-      console.log("THIS IS THE UID");
-      console.log(user.uid);
-
-      //i think this is authenticating the user
-      axios.get("https://api.chatengine.io/users/me", {
-        headers: {
-          "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
-          "user-name": email,
-          "user-secret": user.uid,
-        },
-      });
-      console.log("USER AUTHENTICATED");
+      await firebaseLogin();
     } catch (error) {
-      console.log("Login failed! " + error);
+      console.log("Login to site method failed! " + error);
     }
   };
 
-  const loginToSite = async () => {
+  const firebaseLogin = async () => {
     await auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ChatEngine } from "react-chat-engine";
 import { auth } from "../Firebase";
-
 import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
 
@@ -24,7 +23,7 @@ const Chats = () => {
     }
 
     //if we do have the user
-
+    //FIXME: giving an error when a new user signs up and has 0 chats
     const authObject = {
       "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
       "User-Name": user.email,
@@ -37,49 +36,21 @@ const Chats = () => {
       })
       .then(() => {
         setLoading(false);
+      })
+      .catch((error) => {
+        console.log("i messed up");
+        console.log(error);
       });
-
-    // axios.get("https://api.chatengine.io/users/me", {
-    //   headers: {
-    //     "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
-    //     "user-name": user.email,
-    //     "user-secret": user.uid,
-    //   },
-    // });
   }, [user, history]);
 
-  // useEffect(() => {
-  //   let axios = require("axios");
-
-  //   let config = {
-  //     method: "get",
-  //     url: "https://api.chatengine.io/users/chats/",
-  //     headers: {
-  //       "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
-  //       "User-Name": user.email,
-  //       "User-Secret": localStorage.getItem("password"),
-  //     },
-  //   };
-
-  //   axios(config)
-  //     .then(function (response) {
-  //       console.log(JSON.stringify(response.data));
-  //       setLoading(false);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //       console.log("DOGGGGGG"); //axios is having an error here
-  //     });
-  // }, [user]);
-
-  console.log("IS THIS TRUE?");
-  console.log(loading);
+  // console.log("IS THIS TRUE?");
+  // console.log(loading);
   if (!user || loading) return "Loading ...";
 
   return (
     <div className="chats-page">
       <div className="nav-bar">
-        <div className="logo-tab">Unichat</div>
+        <div className="logo-tab">Chat.io</div>
 
         <div onClick={handleLogout} className="logout-tab">
           Logout
