@@ -43,8 +43,6 @@ const Chats = () => {
       });
   }, [user, history]);
 
-  // console.log("IS THIS TRUE?");
-  // console.log(loading);
   if (!user || loading) return "Loading ...";
 
   return (
