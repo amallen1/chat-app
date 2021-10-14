@@ -3,7 +3,8 @@ import { auth } from "../../Firebase";
 import "firebase/app";
 import { useAuth } from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+
+// import axios from "axios";
 
 import {
   SignupPage,
@@ -12,6 +13,8 @@ import {
   Label,
   Input,
   SignUpButton,
+  Message,
+  StyledLink,
 } from "./SignupStyles";
 
 const Signup = () => {
@@ -19,32 +22,22 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const history = useHistory();
-
-  const getFile = async (url) => {
-    const response = await fetch(url);
-    const data = await response.blob(); //contains our image
-
-    return new File([data], "userPhoto.jpeg", { type: "image/jpeg" });
-  };
+  //const history = useHistory();
 
   useEffect(() => {
-    createUser2(); 
-  }, [user, history]);
+    if (user) {
+      //creates an account for user on chat engine
+      createUser();
+    }
+  }, [user]);
 
-  // Creates an account for the user on firebase
-  const login = async () => {
+  // Creates an account for the user on firebase and this works as it should
+  const createFirebaseUser = async () => {
     await auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in
         const userCred = userCredential.user;
-        //console.log("THIS IS THE UID IM PASSING" + userCred.uid);
-        // createUser(userCred.uid);
-
-        //creates an account for user on chat engine
-        //createUser2();
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -54,21 +47,29 @@ const Signup = () => {
       });
   };
 
-  const createUser2 = async () => {
-    //we want to see if a user has already been created
+  //posting correctly to the chat api
+  const createUser = async () => {
     if (!user) return;
+    //we want to see if a user has already been created
+    // if (!user) return; //if user is null don't create
     const axios = require("axios");
     let data = {
       username: user.email,
-      secret: user.uid,
       email: user.email,
+      secret: user.uid,
     };
+
+    console.log("what the hell is this")
+    console.log(data.secret)
+
+    localStorage.setItem("usersecret", user.uid);
+    console.log(user.uid);
 
     let config = {
       method: "post",
       url: "https://api.chatengine.io/users/",
       headers: {
-        "PRIVATE-KEY": "{ae4eb860-1f12-4aa3-b312-66611960f055}",
+        "PRIVATE-KEY": "ae4eb860-1f12-4aa3-b312-66611960f055",
       },
       data: data,
     };
@@ -76,36 +77,10 @@ const Signup = () => {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        console.log("IT WAS A SUCCESS");
       })
       .catch(function (error) {
-        console.log(error);
-      });
-  };
-
-  //post request to create a new user on chat engine
-  const createUser = async (userCred) => {
-    let axios = require("axios");
-    let data = {
-      username: email,
-      secret: userCred,
-      email: email,
-    };
-
-    let config = {
-      method: "post",
-      url: "https://api.chatengine.io/users/",
-      headers: {
-        "PRIVATE-KEY": "{{ae4eb860-1f12-4aa3-b312-66611960f055}}",
-      },
-      data: data,
-    };
-
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
+        console.log("WHATS THE FREAKING ERROR -->" + error);
       });
   };
 
@@ -113,9 +88,9 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      await login();
+      await createFirebaseUser();
     } catch (error) {
-      console.log("Login after signup failed " + error);
+      console.log("createFirebaseUser after signup failed " + error);
     }
   };
 
@@ -150,9 +125,9 @@ const Signup = () => {
 
           <SignUpButton>Sign In</SignUpButton>
         </SignUpForm>
-        <p>Already have an account?</p>
+        <Message>Already have an account?</Message>
 
-        <a href="/">Login</a>
+        <StyledLink to={"/"}>createFirebaseUser</StyledLink>
       </SignupCard>
     </SignupPage>
   );

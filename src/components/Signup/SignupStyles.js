@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const SignupPage = styled.div`
@@ -38,5 +39,19 @@ export const Input = styled.input`
 
 export const SignUpButton = styled.button`
   width: 50%;
-  margin: .5em auto 1em;
+  margin: 1.5em auto 0;
+  background-color: #2c4be7;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 0.5em;
+`;
+
+export const StyledLink = styled(Link)`
+  font-size: 14px;
+  color: #4661e6;
+`;
+
+export const Message = styled.p`
+  font-size: 13px;
 `;

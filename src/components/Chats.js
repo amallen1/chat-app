@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { ChatEngine } from "react-chat-engine";
 import { auth } from "../Firebase";
 
 import { useAuth } from "../contexts/AuthContext";
-// import axios from "axios";
+import axios from "axios";
 
 const Chats = () => {
   const history = useHistory();
@@ -16,57 +16,65 @@ const Chats = () => {
     history.push("/");
   };
 
-  // const getFile = async (url) => {
-  //   const response = await fetch(url);
-  //   const data = await response.blob(); //contains our image
+  useEffect(() => {
+    if (!user) {
+      history.push("/");
+      //if there is no user, redirect them to the login page
+      return;
+    }
 
-  //   return new File([data], "userPhoto.jpeg", { type: "image/jpeg" });
-  // };
+    //if we do have the user
+
+    const authObject = {
+      "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+      "User-Name": user.email,
+      "User-Secret": user.uid,
+    };
+
+    axios
+      .get("https://api.chatengine.io/chats", {
+        headers: authObject,
+      })
+      .then(() => {
+        setLoading(false);
+      });
+
+    // axios.get("https://api.chatengine.io/users/me", {
+    //   headers: {
+    //     "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+    //     "user-name": user.email,
+    //     "user-secret": user.uid,
+    //   },
+    // });
+  }, [user, history]);
 
   // useEffect(() => {
-  //   //if there is no user
-  //   if (!user) {
-  //     history.push("/");
-  //     return;
-  //   }
+  //   let axios = require("axios");
 
-  //   //if we do have a user, make a get call to the chat engine
-  //   //we want to see if a user has already been created
-  //   axios
-  //     .get("https://api.chatengine.io/users/me", {
-  //       headers: {
-  //         "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
-  //         "user-name": user.email,
-  //         "user-secret": user.uid,
-  //       },
-  //     })
-  //     .then(() => {
+  //   let config = {
+  //     method: "get",
+  //     url: "https://api.chatengine.io/users/chats/",
+  //     headers: {
+  //       "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+  //       "User-Name": user.email,
+  //       "User-Secret": localStorage.getItem("password"),
+  //     },
+  //   };
+
+  //   axios(config)
+  //     .then(function (response) {
+  //       console.log(JSON.stringify(response.data));
   //       setLoading(false);
-  //       console.log("LOADING IS SET TO FALSE");
   //     })
-  //     .catch(() => {
-  //       let formdata = new FormData();
-  //       formdata.append("email", user.email);
-  //       formdata.append("username", user.email);
-  //       formdata.append("secret", user.uid);
-
-  //       getFile(user.photoURL).then((avatar) => {
-  //         formdata.append("avatar", avatar, avatar.name);
-
-  //         axios
-  //           .post("https://api.chatengine.io/users", formdata, {
-  //             headers: {
-  //               "private-key": "ae4eb860-1f12-4aa3-b312-66611960f055",
-  //             },
-  //           })
-  //           .then(() => setLoading(false))
-  //           .catch((error) => console.log(error));
-  //         console.log("IT WAS AN ERROR");
-  //       });
+  //     .catch(function (error) {
+  //       console.log(error);
+  //       console.log("DOGGGGGG"); //axios is having an error here
   //     });
-  // }, [user, history]);
+  // }, [user]);
 
-  if (!user) return "Loading...";
+  console.log("IS THIS TRUE?");
+  console.log(loading);
+  if (!user || loading) return "Loading ...";
 
   return (
     <div className="chats-page">

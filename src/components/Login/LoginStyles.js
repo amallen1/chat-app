@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 export const LoginPage = styled.div`
@@ -18,20 +19,27 @@ export const LoginCard = styled.div`
   max-width: 500px;
 `;
 
-export const GoogleLogin = styled.div`
-  background-color: #4285f4;
-  color: white;
-  cursor: pointer;
-  padding: 0.75em;
-  border-radius: 8px;
-  display: inline-block;
+export const GoogleLogin = styled.a`
+  background-color: #fff;
+  border: 1px solid #cecece;
+  padding: 0.25em;
+  border-radius: 10px;
+  font-size: 0.875em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 1em 0;
+
+  :before {
+    content: url("./images/google-icon.svg");
+    transform: translate(-5px, 2px);
+  }
 `;
 
-export const LoginForm = styled.form`
+export const Form = styled.form`
   display: flex;
   flex-direction: column;
-  margin: 2em 0;
+  margin: 0.5em 0;
 `;
 
 export const Label = styled.label`
@@ -48,6 +56,24 @@ export const Input = styled.input`
 
 export const LoginButton = styled.button`
   width: 50%;
-  margin: 2em auto 0;
+  margin: 1.5em auto 0;
+  background-color: #2c4be7;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 0.5em;
 `;
 
+export const Detail = styled.p`
+  font-size: 12px;
+`;
+
+export const Links = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+`;
+
+export const StyledLink = styled(Link)`
+  color: #4661e6;
+`;
