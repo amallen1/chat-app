@@ -4,7 +4,7 @@ import "firebase/app";
 import { useAuth } from "../../contexts/AuthContext";
 import { useHistory } from "react-router-dom";
 
-// import axios from "axios";
+import axios from "axios";
 
 import {
   SignupPage,
@@ -47,11 +47,9 @@ const Signup = () => {
       });
   };
 
-  //posting correctly to the chat api
-  //Creates a user on chatengine io backend
   const createUser = async () => {
     if (!user) return;
-    const axios = require("axios");
+
     let data = {
       username: user.email,
       email: user.email,
@@ -70,13 +68,11 @@ const Signup = () => {
     axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
+        history.push("/chats");
       })
       .catch(function (error) {
-        console.log("what is the error -->" + error);
+        console.log(error);
       });
-
-    console.log("successfully created a user on chatengine io");
-    history.push("/chats");
   };
 
   const handleSubmit = async (e) => {

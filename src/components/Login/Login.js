@@ -27,22 +27,25 @@ const Login = () => {
   const { user } = useAuth();
   const history = useHistory();
 
-  console.log(process.env);
-
   useEffect(() => {
     if (user) {
       try {
         //authenticating the user before going to chat page
-        axios.get("https://api.chatengine.io/users/me", {
-          headers: {
-            "project-id": process.env.REACT_APP_PROJECT_ID,
-            "user-name": email,
-            "user-secret": user.uid,
-          },
-        });
+        axios
+          .get("https://api.chatengine.io/users/me/", {
+            headers: {
+              "Project-ID": process.env.REACT_APP_PROJECT_ID,
+              "User-Name": email,
+              "User-Secret": user.uid,
+            },
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       } catch (error) {
         console.log(error);
       }
+      console.log(user.uid);
       history.push("/chats");
     }
   }, [user]);

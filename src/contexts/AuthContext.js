@@ -4,7 +4,7 @@ import { auth } from "../Firebase";
 
 const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext); //function that exports our entire context
+export const useAuth = () => useContext(AuthContext);
 
 
 export const AuthProvider = ({ children }) => {
