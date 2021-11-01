@@ -17,13 +17,17 @@ import {
   LoginButton,
   Detail,
   Links,
+  ErrorMessage,
 } from "./LoginStyles";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(false);
   const { user } = useAuth();
   const history = useHistory();
+
+  console.log(process.env);
 
   useEffect(() => {
     if (user) {
@@ -31,16 +35,14 @@ const Login = () => {
         //authenticating the user before going to chat page
         axios.get("https://api.chatengine.io/users/me", {
           headers: {
-            "project-id": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+            "project-id": process.env.REACT_APP_PROJECT_ID,
             "user-name": email,
             "user-secret": user.uid,
           },
         });
-        console.log("USER AUTHENTICATED");
       } catch (error) {
-        console.log("Login failed! " + error);
+        console.log(error);
       }
-      console.log(user.uid);
       history.push("/chats");
     }
   }, [user]);
@@ -59,6 +61,7 @@ const Login = () => {
     await auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredential) => {
+        setError(false);
         // Signed in
         const user = userCredential.user;
         // ...
@@ -66,13 +69,16 @@ const Login = () => {
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        console.log(errorMessage);
+        console.log("ERROR IN FIREBASELOGIN");
+        setError(true);
       });
   };
 
   return (
     <LoginPage>
       <LoginCard>
-        <h2>Welcome to Unichat</h2>
+        <h2>Welcome to Chat.io!</h2>
 
         <GoogleLogin
           onClick={() =>
@@ -82,7 +88,11 @@ const Login = () => {
           Sign in with Google
         </GoogleLogin>
 
-        <Detail>Or</Detail>
+        {error ? (
+          <ErrorMessage>Invalid email or password</ErrorMessage>
+        ) : (
+          <Detail>Or</Detail>
+        )}
 
         <Form onSubmit={handleLogin}>
           <Label htmlFor="email">Email</Label>
@@ -91,6 +101,7 @@ const Login = () => {
             type="email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            required
           />
 
           <Label htmlFor="password">Password</Label>
@@ -98,10 +109,11 @@ const Login = () => {
             type="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            required
           />
           <Links>
-            <StyledLink to={"/signup"}>Don't have an account?</StyledLink>
-            <StyledLink to={"#"}>Forgot Password?</StyledLink>
+            <StyledLink to={"/signup"}>Don't have an account? </StyledLink>
+            {/* <StyledLink to={"#"}>Forgot Password?</StyledLink> */}
           </Links>
 
           <LoginButton>Log In</LoginButton>

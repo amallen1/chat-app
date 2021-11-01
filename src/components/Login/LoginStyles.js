@@ -77,3 +77,11 @@ export const Links = styled.div`
 export const StyledLink = styled(Link)`
   color: #4661e6;
 `;
+
+export const ErrorMessage = styled.div`
+  background-color: #fcddd9;
+  color: #a33232;
+  font-weight: 500;
+  padding: 1rem;
+  margin: 1rem 0;
+`;

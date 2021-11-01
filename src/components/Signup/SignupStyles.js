@@ -54,4 +54,5 @@ export const StyledLink = styled(Link)`
 
 export const Message = styled.p`
   font-size: 13px;
+  margin: 1rem 0;
 `;

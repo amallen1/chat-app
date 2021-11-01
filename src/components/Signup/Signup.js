@@ -51,8 +51,6 @@ const Signup = () => {
   //Creates a user on chatengine io backend
   const createUser = async () => {
     if (!user) return;
-    //we want to see if a user has already been created
-    // if (!user) return; //if user is null don't create
     const axios = require("axios");
     let data = {
       username: user.email,
@@ -64,7 +62,7 @@ const Signup = () => {
       method: "post",
       url: "https://api.chatengine.io/users/",
       headers: {
-        "PRIVATE-KEY": "ae4eb860-1f12-4aa3-b312-66611960f055",
+        "PRIVATE-KEY": process.env.REACT_APP_PRIVATE_KEY,
       },
       data: data,
     };
@@ -102,6 +100,7 @@ const Signup = () => {
             name="name"
             onChange={(e) => setName(e.target.value)}
             value={name}
+            required
           />
 
           <Label htmlFor="email">Email</Label>
@@ -110,6 +109,7 @@ const Signup = () => {
             name="email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            required
           />
 
           <Label htmlFor="password">Password</Label>
@@ -118,13 +118,15 @@ const Signup = () => {
             name="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            required
           />
 
           <SignUpButton>Sign In</SignUpButton>
         </SignUpForm>
-        <Message>Already have an account?</Message>
 
-        <StyledLink to={"/"}>createFirebaseUser</StyledLink>
+        <StyledLink to={"/"}>
+          <Message>Already have an account?</Message>
+        </StyledLink>
       </SignupCard>
     </SignupPage>
   );

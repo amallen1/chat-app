@@ -25,7 +25,7 @@ const Chats = () => {
     //if we do have the user
     //FIXME: giving an error when a new user signs up and has 0 chats
     const authObject = {
-      "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+      "Project-ID": process.env.REACT_APP_PROJECT_ID,
       "User-Name": user.email,
       "User-Secret": user.uid,
     };
@@ -57,7 +57,7 @@ const Chats = () => {
 
       <ChatEngine
         height="calc(100vh - 66px)"
-        projectID="b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e"
+        projectID={process.env.REACT_APP_PROJECT_ID}
         userName={user.email}
         userSecret={user.uid}
       />
