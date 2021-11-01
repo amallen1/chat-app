@@ -24,14 +24,12 @@ const Signup = () => {
   const { user } = useAuth();
   const history = useHistory();
 
-  //seems like errors happen when a new user signs up and doesn't have any chats
   useEffect(() => {
     if (user) {
       createUser();
     }
   }, [user]);
 
-  // Creates an account for the user on firebase
   const createFirebaseUser = async () => {
     await auth
       .createUserWithEmailAndPassword(email, password)

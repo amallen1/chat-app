@@ -31,21 +31,16 @@ const Login = () => {
     if (user) {
       try {
         //authenticating the user before going to chat page
-        axios
-          .get("https://api.chatengine.io/users/me/", {
-            headers: {
-              "Project-ID": process.env.REACT_APP_PROJECT_ID,
-              "User-Name": email,
-              "User-Secret": user.uid,
-            },
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        axios.get("https://api.chatengine.io/users/me", {
+          headers: {
+            "Project-ID": process.env.REACT_APP_PROJECT_ID,
+            "User-Name": email,
+            "User-Secret": user.uid,
+          },
+        });
       } catch (error) {
         console.log(error);
       }
-      console.log(user.uid);
       history.push("/chats");
     }
   }, [user]);

@@ -18,29 +18,38 @@ const Chats = () => {
   useEffect(() => {
     if (!user) {
       history.push("/");
-      //if there is no user, redirect them to the login page
       return;
     }
+    axios
+      .get("https://api.chatengine.io/users/me/", {
+        headers: {
+          "Project-ID": process.env.REACT_APP_PROJECT_ID,
+          "User-Name": user.email,
+          "User-Secret": user.uid,
+        },
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log("error authenticating");
+      });
 
-    console.log(user.uid);
-
-    //if we do have the user
     //FIXME: giving an error when a new user signs up and has 0 chats
     const authObject = {
-      "Project-ID": "b375bca0-9a0b-4efa-8bb6-a4ad3a963b4e",
+      "Project-ID": process.env.REACT_APP_PROJECT_ID,
       "User-Name": user.email,
       "User-Secret": user.uid,
     };
 
     axios
-      .get("https://api.chatengine.io/chats", {
+      .get("https://api.chatengine.io/chats/", {
         headers: authObject,
       })
       .then(() => {
         setLoading(false);
+        console.log("got chats");
       })
       .catch((error) => {
-        console.log("i messed up");
+        console.log("Error getting chats");
         console.log(error);
       });
   }, [user, history]);
